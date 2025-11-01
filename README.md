@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# Conway’s Game of Life 🧬
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A production-ready React + TypeScript implementation of **Conway’s Game of Life**, built to simulate cellular automata directly on the client side.  
+The project follows clean architecture principles and includes a simple abstraction layer that allows the simulation to be executed **locally** or via a **service API facade** (for future backend integration).
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎯 What is this project?
 
-## React Compiler
+Conway’s Game of Life is a zero-player game devised by mathematician John Conway.  
+It consists of a grid of cells that evolve across generations based on a few simple rules:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Any live cell with **two or three live neighbours** survives.
+- Any dead cell with **exactly three live neighbours** becomes alive.
+- All other live cells die in the next generation, and all other dead cells remain dead.
 
-## Expanding the ESLint configuration
+This implementation focuses on:
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- A responsive board where you can toggle cells on/off.
+- Manual and automatic progression of generations.
+- The ability to advance a specific number of generations.
+- Clean separation between UI and simulation logic.
+- A service-based facade pattern (`LocalGameOfLifeService` / `ApiGameOfLifeService`) for testing both approaches.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ⚙️ Tech Stack
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- **React 19 + TypeScript**
+- **Node-v22.21.1**
+- **Vite** as build tool
+- **Custom Game Logic** (no external automata libraries)
+- Optional abstraction to simulate calling an API
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🚀 How to Run
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/conways-game-of-life.git
+cd conways-game-of-life
+npm install
+npm run dev
 ```
