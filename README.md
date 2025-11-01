@@ -1,6 +1,6 @@
 # Conway’s Game of Life 🧬
 
-A production-ready React + TypeScript implementation of **Conway’s Game of Life**, built to simulate cellular automata directly on the client side.  
+React + TypeScript implementation of **Conway’s Game of Life**, built to simulate cellular automata directly on the client side.  
 The project follows clean architecture principles and includes a simple abstraction layer that allows the simulation to be executed **locally** or via a **service API facade** (for future backend integration).
 
 ---
