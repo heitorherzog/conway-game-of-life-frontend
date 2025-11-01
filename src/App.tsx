@@ -1,64 +1,71 @@
 import { useState } from "react";
-import "./style.css";
 import { Board } from "./components/Board";
-import { getNextGeneration, generateEmptyGrid } from "./logic/gameOfLife";
 import { useInterval } from "./hooks/useInterval";
+import "./style.css";
+import {
+  generateEmptyGrid,
+  getNextGeneration,
+  type Grid,
+} from "./logic/gameOfLife";
 
-const ROWS = 10;
-const COLS = 10;
+const ROWS = 25;
+const COLS = 25;
 
 export default function App() {
-  const [grid, setGrid] = useState(() => generateEmptyGrid(ROWS, COLS));
+  const [grid, setGrid] = useState<Grid>(() => generateEmptyGrid(ROWS, COLS));
   const [running, setRunning] = useState(false);
-  const [steps, setSteps] = useState(1);
+  const [steps, setSteps] = useState(20);
 
   useInterval(
     () => setGrid((prev) => getNextGeneration(prev)),
     running ? 300 : null
   );
 
-  function toggleCell(r: number, c: number) {
-    const newGrid = grid.map((row) => [...row]);
-    newGrid[r][c] = grid[r][c] ? 0 : 1;
+  function toggleCell(row: number, col: number) {
+    const newGrid = grid.map((r) => [...r]);
+    newGrid[row][col] = grid[row][col] ? 0 : 1;
     setGrid(newGrid);
   }
 
   function handleAdvance() {
     let temp = grid;
-    for (let i = 0; i < steps; i++) temp = getNextGeneration(temp);
+    for (let i = 0; i < steps; i++) {
+      temp = getNextGeneration(temp);
+    }
     setGrid(temp);
+  }
+
+  function handleClear() {
+    setGrid(generateEmptyGrid(ROWS, COLS));
+    setRunning(false);
   }
 
   return (
     <div className="app">
-      <button onClick={() => setGrid(getNextGeneration(grid))}>
-        Next Generation
-      </button>
-      <button onClick={handleAdvance}>Advance {steps} Steps</button>
-      <input
-        type="number"
-        value={steps}
-        min={1}
-        max={100}
-        onChange={(e) => setSteps(Number(e.target.value))}
-        style={{
-          width: 60,
-          textAlign: "center",
-          marginLeft: 8,
-        }}
-      />
-      <div style={{ marginTop: 8 }}>
+      <h1>Conway’s Game of Life</h1>
+
+      <Board grid={grid} onToggle={toggleCell} />
+
+      <div className="controls">
         <button onClick={() => setRunning(!running)}>
           {running ? "Stop" : "Start"}
         </button>
-        <button onClick={() => setGrid(getNextGeneration(grid))}>Next</button>
-        <button onClick={() => setGrid(generateEmptyGrid(ROWS, COLS))}>
-          Clear
+
+        <button onClick={() => setGrid(getNextGeneration(grid))}>
+          Next Step
         </button>
-      </div>
-      <h1>Conway’s Game of Life</h1>
-      <div>
-        <Board grid={grid} onToggle={toggleCell}></Board>
+
+        <button onClick={handleAdvance}>Advance {steps} Steps</button>
+
+        <input
+          type="number"
+          value={steps}
+          min={1}
+          max={100}
+          onChange={(e) => setSteps(Number(e.target.value))}
+        />
+
+        <button onClick={handleClear}>Clear</button>
       </div>
     </div>
   );
