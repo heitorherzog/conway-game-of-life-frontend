@@ -1,59 +1,58 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Board } from "./components/Board";
+import type { Grid } from "./logic/gameOfLife";
 import { useInterval } from "./hooks/useInterval";
 import "./style.css";
-import {
-  generateEmptyGrid,
-  getNextGeneration,
-  getAdvanceGenerations,
-  type Grid,
-} from "./logic/gameOfLife";
+import { createGameOfLifeService } from "./logic/gameOfLifeFactory";
 
 const ROWS = 25;
 const COLS = 25;
+const service = createGameOfLifeService();
 
 export default function App() {
-  const [grid, setGrid] = useState<Grid>(() => generateEmptyGrid(ROWS, COLS));
+  const [grid, setGrid] = useState<Grid>([]);
   const [running, setRunning] = useState(false);
   const [steps, setSteps] = useState(20);
 
+  useEffect(() => {
+    service.generateEmptyGrid(ROWS, COLS).then(setGrid);
+  }, []);
+
   useInterval(
-    () => setGrid((prev) => getNextGeneration(prev)),
+    () => {
+      service.getNextGeneration(grid).then(setGrid);
+    },
     running ? 300 : null
   );
 
+  async function handleNext() {
+    let temp = grid;
+    for (let i = 0; i < steps; i++) {
+      temp = await service.getNextGeneration(temp);
+    }
+    setGrid(temp);
+  }
+
   function toggleCell(row: number, col: number) {
-    const newGrid = grid.map((r) => [...r]);
-    newGrid[row][col] = grid[row][col] ? 0 : 1;
-    setGrid(newGrid);
-  }
-
-  function handleAdvance() {
-    setGrid(getAdvanceGenerations(grid, steps));
-  }
-
-  function handleClear() {
-    setGrid(generateEmptyGrid(ROWS, COLS));
-    setRunning(false);
+    const copy = grid.map((r) => [...r]);
+    copy[row][col] = grid[row][col] ? 0 : 1;
+    setGrid(copy);
   }
 
   return (
     <div className="app">
       <h1>Conway’s Game of Life</h1>
-
       <Board grid={grid} onToggle={toggleCell} />
-
       <div className="controls">
         <button onClick={() => setRunning(!running)}>
           {running ? "Stop" : "Start"}
         </button>
-
-        <button onClick={() => setGrid(getNextGeneration(grid))}>
-          Next Step
+        <button onClick={handleNext}>Next ({steps})</button>
+        <button
+          onClick={() => service.generateEmptyGrid(ROWS, COLS).then(setGrid)}
+        >
+          Clear
         </button>
-
-        <button onClick={handleAdvance}>Advance {steps} Steps</button>
-
         <input
           type="number"
           value={steps}
@@ -61,8 +60,6 @@ export default function App() {
           max={100}
           onChange={(e) => setSteps(Number(e.target.value))}
         />
-
-        <button onClick={handleClear}>Clear</button>
       </div>
     </div>
   );
