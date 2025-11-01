@@ -1,12 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
 
 export default function App() {
   const rows = 10;
   const cols = 10;
+  const [running, setRunning] = useState(false);
   const [grid, setGrid] = useState(() =>
     Array.from({ length: rows }, () => Array(cols).fill(0))
   );
+
+  useEffect(() => {
+    if (!running) return;
+    const id = setInterval(() => {
+      setGrid((g) => nextGeneration(g));
+    }, 300);
+    return () => clearInterval(id);
+  }, [running]);
 
   function toggleCell(r: number, c: number) {
     const newGrid = grid.map((row) => [...row]);
@@ -51,6 +60,19 @@ export default function App() {
       <button onClick={() => setGrid(nextGeneration(grid))}>
         Next Generation
       </button>
+      <div style={{ marginTop: 8 }}>
+        <button onClick={() => setRunning(!running)}>
+          {running ? "Stop" : "Start"}
+        </button>
+        <button onClick={() => setGrid(nextGeneration(grid))}>Next</button>
+        <button
+          onClick={() =>
+            setGrid(Array.from({ length: rows }, () => Array(cols).fill(0)))
+          }
+        >
+          Clear
+        </button>
+      </div>
       <h1>Conway’s Game of Life</h1>
       <div>
         {grid.map((row, rIdx) => (
