@@ -5,6 +5,7 @@ import "./style.css";
 import {
   generateEmptyGrid,
   getNextGeneration,
+  getAdvanceGenerations,
   type Grid,
 } from "./logic/gameOfLife";
 
@@ -28,11 +29,7 @@ export default function App() {
   }
 
   function handleAdvance() {
-    let temp = grid;
-    for (let i = 0; i < steps; i++) {
-      temp = getNextGeneration(temp);
-    }
-    setGrid(temp);
+    setGrid(getAdvanceGenerations(grid, steps));
   }
 
   function handleClear() {

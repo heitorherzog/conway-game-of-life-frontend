@@ -1,7 +1,8 @@
 export type Grid = number[][];
+export type Cell = 0 | 1; // 0 = dead, 1 = alive
 
 export function generateEmptyGrid(rows: number, cols: number): Grid {
-  return Array.from({ length: rows }, () => Array(cols).fill(0));
+  return Array.from({ length: rows }, () => Array<Cell>(cols).fill(0));
 }
 
 export function getNextGeneration(current: Grid): Grid {
@@ -13,12 +14,23 @@ export function getNextGeneration(current: Grid): Grid {
     for (let c = 0; c < cols; c++) {
       const neighbors = countNeighbors(current, r, c);
       const cell = current[r][c];
-      if (cell === 1 && (neighbors < 2 || neighbors > 3)) next[r][c] = 0;
-      else if (cell === 0 && neighbors === 3) next[r][c] = 1;
+      const alive = cell === 1;
+      const dead = cell === 0;
+
+      if (alive && (neighbors < 2 || neighbors > 3)) next[r][c] = 0;
+      else if (dead && neighbors === 3) next[r][c] = 1;
     }
   }
 
   return next;
+}
+
+export function getAdvanceGenerations(grid: Grid, steps: number): Grid {
+  let g = grid;
+  for (let i = 0; i < steps; i++) {
+    g = getNextGeneration(g);
+  }
+  return g;
 }
 
 function countNeighbors(grid: Grid, row: number, col: number): number {
