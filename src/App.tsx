@@ -4,12 +4,13 @@ import { Board } from "./components/Board";
 import { getNextGeneration, generateEmptyGrid } from "./logic/gameOfLife";
 import { useInterval } from "./hooks/useInterval";
 
-const rows = 10;
-const cols = 10;
+const ROWS = 10;
+const COLS = 10;
 
 export default function App() {
-  const [grid, setGrid] = useState(() => generateEmptyGrid(rows, cols));
+  const [grid, setGrid] = useState(() => generateEmptyGrid(ROWS, COLS));
   const [running, setRunning] = useState(false);
+  const [steps, setSteps] = useState(1);
 
   useInterval(
     () => setGrid((prev) => getNextGeneration(prev)),
@@ -22,17 +23,36 @@ export default function App() {
     setGrid(newGrid);
   }
 
+  function handleAdvance() {
+    let temp = grid;
+    for (let i = 0; i < steps; i++) temp = getNextGeneration(temp);
+    setGrid(temp);
+  }
+
   return (
     <div className="app">
       <button onClick={() => setGrid(getNextGeneration(grid))}>
         Next Generation
       </button>
+      <button onClick={handleAdvance}>Advance {steps} Steps</button>
+      <input
+        type="number"
+        value={steps}
+        min={1}
+        max={100}
+        onChange={(e) => setSteps(Number(e.target.value))}
+        style={{
+          width: 60,
+          textAlign: "center",
+          marginLeft: 8,
+        }}
+      />
       <div style={{ marginTop: 8 }}>
         <button onClick={() => setRunning(!running)}>
           {running ? "Stop" : "Start"}
         </button>
         <button onClick={() => setGrid(getNextGeneration(grid))}>Next</button>
-        <button onClick={() => setGrid(generateEmptyGrid(rows, cols))}>
+        <button onClick={() => setGrid(generateEmptyGrid(ROWS, COLS))}>
           Clear
         </button>
       </div>
