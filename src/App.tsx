@@ -1,21 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./style.css";
 import { Board } from "./components/Board";
 import { getNextGeneration, generateEmptyGrid } from "./logic/gameOfLife";
+import { useInterval } from "./hooks/useInterval";
+
+const rows = 10;
+const cols = 10;
 
 export default function App() {
-  const rows = 10;
-  const cols = 10;
-  const [running, setRunning] = useState(false);
   const [grid, setGrid] = useState(() => generateEmptyGrid(rows, cols));
+  const [running, setRunning] = useState(false);
 
-  useEffect(() => {
-    if (!running) return;
-    const id = setInterval(() => {
-      setGrid((g) => getNextGeneration(g));
-    }, 300);
-    return () => clearInterval(id);
-  }, [running]);
+  useInterval(
+    () => setGrid((prev) => getNextGeneration(prev)),
+    running ? 300 : null
+  );
 
   function toggleCell(r: number, c: number) {
     const newGrid = grid.map((row) => [...row]);
