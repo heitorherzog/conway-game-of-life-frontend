@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./style.css";
+import { Board } from "./components/Board";
 
 export default function App() {
   const rows = 10;
@@ -75,23 +76,7 @@ export default function App() {
       </div>
       <h1>Conway’s Game of Life</h1>
       <div>
-        {grid.map((row, rIdx) => (
-          <div key={rIdx} style={{ display: "flex" }}>
-            {row.map((cell, cIdx) => (
-              <div
-                key={cIdx}
-                onClick={() => toggleCell(rIdx, cIdx)}
-                style={{
-                  width: 20,
-                  height: 20,
-                  border: "1px solid #222",
-                  background: cell ? "#00e676" : "#111",
-                  cursor: "pointer",
-                }}
-              />
-            ))}
-          </div>
-        ))}
+        <Board grid={grid} onToggle={toggleCell}></Board>
       </div>
     </div>
   );
